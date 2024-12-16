@@ -1,19 +1,24 @@
 git_checkout() {
-  branch="$1" repo_local_path="${2:-.}"
+  branch=$(guard branch $1) 
+  repo_local_path="${2:-.}"
   echo "git >> Checking out branch $branch on repo $repo_local_path"
 
   git -C $repo_local_path checkout $branch
 }
 
 git_pull() {
-  branch="${1:-main}" repo_local_path="${2:-.}" origin="${3:-origin}"
+  branch="${1:-main}" 
+  repo_local_path="${2:-.}" 
+  origin="${3:-origin}"
   echo "git >> Pulling repo $repo_local_path"
 
   git -C "$repo_local_path" pull $origin $branch
 }
 
 git_force_pull() {
-  branch="${1:-main}" repo_local_path="${2:-.}" origin="${3:-origin}"
+  branch="${1:-main}" 
+  repo_local_path="${2:-.}" 
+  origin="${3:-origin}"
   echo "git >> Force pulling repo $repo_local_path"
 
   git -C "$repo_local_path" reset --hard HEAD~1

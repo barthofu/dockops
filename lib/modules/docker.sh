@@ -13,7 +13,7 @@ docker_compose_down() {
 }
 
 docker_compose_pull() {
-  path=$1
+  path=$(gaurd path $1) || exit 1
   echo "docker >> Pulling docker-compose at $path"
 
   docker compose -f $path/docker-compose.yml pull

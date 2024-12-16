@@ -1,4 +1,4 @@
-declare -a IGNORED_FILES=("dockops.sh" "dockops_restart.sh" "loader.sh" "test.sh")
+declare -a IGNORED_FILES=("dockops.sh" "dockops_restart.sh" "loader.sh")
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
@@ -15,4 +15,4 @@ source_file() {
 }
 
 # read all the .sh files in $DIR recursively and source them
-while read file_path; do source_file $file_path; done < <(find $DIR/.. -name '*.sh' -type f)
+while read file_path; do source_file $file_path; done < <(find $DIR/../.. -name '*.sh' -type f)

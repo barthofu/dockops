@@ -1,5 +1,5 @@
 fs_directory_exists() {
-    path=$1
+    path=$(guard path $1) || exit 1
     if [ -d "$path" ]; then
         return 0
     else

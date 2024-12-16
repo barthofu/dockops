@@ -8,8 +8,7 @@
 
 DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-
-source "$DIR/utils/loader.sh"
+source "$DIR/lib/utils/loader.sh"
 
 trap "exit 1" ERR
 
