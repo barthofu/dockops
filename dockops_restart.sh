@@ -6,9 +6,10 @@
 # Usage:
 # dockops_restart.sh <stack_path>
 
-DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-source "$DIR/lib/utils/loader.sh"
+SCRIPT_PATH="$(readlink -f "$0")"
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+if [ ! -d "$SCRIPT_DIR" ]; then DIR="$PWD"; fi
+source "$SCRIPT_DIR/lib/utils/loader.sh"
 
 trap "exit 1" ERR
 

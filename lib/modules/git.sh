@@ -52,6 +52,7 @@ git_sparse_clone() (
   cd "$local_destination_path"
 
   git init
+  git branch -m $branch
   git remote add -f origin "$remote_url"
 
   git config core.sparseCheckout true

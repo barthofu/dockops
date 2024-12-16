@@ -6,9 +6,10 @@
 # Usage:
 # dockops.sh <REPO_URL> <REPO_BRANCH> <LOCAL_PATH> [REPO_SUBDIR] [INFISICAL_CONFIG_FILENAME]
 
-DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
-source "$DIR/lib/utils/loader.sh"
+SCRIPT_PATH="$(readlink -f "$0")"
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+if [ ! -d "$SCRIPT_DIR" ]; then DIR="$PWD"; fi
+source "$SCRIPT_DIR/lib/utils/loader.sh"
 
 trap "exit 1" ERR
 
@@ -16,8 +17,8 @@ trap "exit 1" ERR
 REPO_URL=${1:-$DOCKOPS_REPO_URL}
 REPO_BRANCH=${2:-$DOCKOPS_REPO_BRANCH}
 REPO_LOCAL_PATH=${3:-$DOCKOPS_REPO_LOCAL_PATH}
-REPO_SUBDIR=${4:-${$DOCKOPS_REPO_SUBDIR:-apps/docker/$(hostname)}}
-INFISICAL_CONFIG_FILENAME=${5:-${$DOCKOPS_INFISICAL_CONFIG_FILENAME:-infisical-agent-config.yaml}}
+REPO_SUBDIR=${4:-${DOCKOPS_REPO_SUBDIR:-apps/docker/$(hostname)}}
+INFISICAL_CONFIG_FILENAME=${5:-${DOCKOPS_INFISICAL_CONFIG_FILENAME:-infisical-agent-config.yaml}}
 
 if [ -z "$REPO_URL" ]; then
   echo "REPO_URL is required"
@@ -65,7 +66,7 @@ check_diff() {
   
   new_commit=$(git -C "$repo_local_path" log --pretty=tformat:"%h" -n1 .)
 	
-	change_has_been_detected=false
+  change_has_been_detected=false
   for directory_path in $full_path/*/; do
     changes=$(git -C $repo_local_path diff --name-status $old_commit $new_commit -- "$directory_path")
 		if [ -n "$changes" ]; then
@@ -83,7 +84,9 @@ check_diff() {
 
 main() {
 
-	if ! fs_directory_exists $REPO_LOCAL_PATH; then
+	if fs_directory_exists $REPO_LOCAL_PATH; then
+		check_diff $REPO_LOCAL_PATH $REPO_SUBDIR $REPO_BRANCH
+	else
 		if [ -z "$REPO_SUBDIR" ]; then # useless for the moment, will be used when generic
 			git_clone $REPO_URL $REPO_LOCAL_PATH
 			git_checkout $REPO_BRANCH $REPO_LOCAL_PATH
@@ -92,9 +95,11 @@ main() {
 		fi
 		infisical_start_agent $REPO_LOCAL_PATH/$REPO_SUBDIR/$INFISICAL_CONFIG_FILENAME
 		sleep 5
+		for directory_path in $REPO_LOCAL_PATH/$REPO_SUBDIR/*/; do
+			docker_compose_up $directory_path
+		done
 	fi
 
-	check_diff $REPO_LOCAL_PATH $REPO_SUBDIR $REPO_BRANCH
 }
 
 main
