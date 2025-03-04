@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Script to pull git repo and restart docker-compose if there is a change.
 # The aim is to reproduce a gitops workflow for docker-compose.

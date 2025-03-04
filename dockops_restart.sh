@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Script to reload docker containers through docker compose.
 # It is meant to be used by external cron or services like Infisical agent. 
